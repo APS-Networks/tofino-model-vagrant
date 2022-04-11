@@ -1,0 +1,62 @@
+#! /usr/bin/env bash
+
+function add_veth {
+	intf=$1
+	peer=$2
+
+	ip link add name $intf type veth peer name $peer
+
+    # ip addr add 172.16.0.$(($idx))/255.255.255.0 dev $intf
+    # ip addr add 172.24.0.$(($idx))/255.255.255.0 dev $peer
+
+    ip link set dev $intf up
+    ip link set dev $peer up
+
+
+
+    # Set the MTU of these interfaces to be larger than default of
+    # 1500 bytes, so that P4 behavioral-model testing can be done
+    # on jumbo frames.
+    # Note: ifconfig is deprecated, and no longer installed by
+    # default in Ubuntu Linux minimal installs starting with
+    # Ubuntu 18.04.  The ip command is installed in Ubuntu
+    # versions since at least 16.04, and probably older versions,
+    # too.
+    ip link set $intf mtu 9500
+    ip link set $peer mtu 9500
+
+    # Disable IPv6 on the interfaces, so that the Linux kernel
+    # will not automatically send IPv6 MDNS, Router Solicitation,
+    # and Multicast Listener Report packets on the interface,
+    # which can make P4 program debugging more confusing.
+    #
+    # Testing indicates that we can still send IPv6 packets across
+    # such interfaces, both from scapy to simple_switch, and from
+    # simple_switch out to scapy sniffing.
+    #
+    # https://superuser.com/questions/356286/how-can-i-switch-off-ipv6-nd-ra-transmissions-in-linux
+    sysctl net.ipv6.conf.${intf}.disable_ipv6=1 2>&1 > /dev/null
+    sysctl net.ipv6.conf.${peer}.disable_ipv6=1 2>&1 > /dev/null
+}
+
+veth_file=/tmp/veth
+function add_veth_ports {
+    count=$1
+    rm -f $veth_file
+    for idx in $(seq 0 $(( $count - 1 ))) ; do
+        intf="veth$(($idx * 2))"
+        peer="veth$(($idx * 2 + 1))"
+        if ! ip link show $intf &> /dev/null; then
+            add_veth $intf $peer
+            echo $intf
+            echo $intf >> /tmp/veth
+        fi
+    done
+}
+
+
+if [[ "$UID" != "0" ]]; then
+	echo $(exec sudo $0 "$@")
+else 
+	add_veth_ports $1
+fi

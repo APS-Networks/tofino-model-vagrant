@@ -1,0 +1,12 @@
+bf-sde-9.7.0.tgz
+bf-sde-9.7.0
+.vagrant
+__pycache__
+*.pyc
+.pytest_cache
+*.tofino
+all.json
+*.log
+work/example/build
+work/example/patch_panel
+work/example/p4/build

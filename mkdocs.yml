@@ -1,0 +1,17 @@
+site_name: Tofino Model VM
+site_url: http://localhost
+
+extra_css: [extra.css]
+theme:
+  name: null
+  custom_dir: 'cinder'
+  highlightjs: true
+  hljs_languages:
+    - python
+    - bash
+  logo: assets/logo.png
+  font: 
+    text: Exo
+nav:
+  - Home: index.md
+

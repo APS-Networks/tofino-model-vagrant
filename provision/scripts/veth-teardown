@@ -1,0 +1,35 @@
+#! /usr/bin/env bash
+
+# function remove_veth_ports {
+# 	count=$1
+# 	for idx in $(seq 0 $(( $count - 1 ))) ; do
+# 	    intf="veth$(($idx*2))"
+# 	    if ip link show $intf &> /dev/null; then
+# 	        echo ip link delete $intf type veth
+# 	        ip link delete $intf type veth
+# 	    fi
+# 	done
+# }
+
+function remove_veth_port {
+    intf=$1
+    if ip link show $intf &> /dev/null; then
+        echo "Removing $intf"
+        ip link delete $intf type veth
+    fi
+}
+
+veth_file=/tmp/veth
+
+if [[ "$UID" != "0" ]]; then
+    exec sudo $0
+else 
+    if [ ! -e $veth_file ]; then
+        echo "File containing veth ports not found, aborting."
+        exit 1
+    fi
+    for veth in $(cat $veth_file); do
+        remove_veth_port $veth
+    done
+    rm $veth_file
+fi

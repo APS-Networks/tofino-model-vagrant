@@ -1,0 +1,23 @@
+APS Networks Tofino Model VM - Quickstart
+=========================================
+
+Welcome to APS Network's Tofino model virtual machine!
+
+For detailed documentation, please check http://localhost:8000 from your guest.
+Online documentation can be disable by removing the associated port forwarding
+rule in the Vagrant config. This does not require a re-provision; the vm can be 
+halted and brought back up.
+
+* The SDE and it's installation can be found at ~/bf-sde-9.7.0.
+* The folder synchronised with the host is found at ~/work
+* The provided example program is found at ~/work/example
+
+Navigate to ~/work/example and run ./tmux_session.sh. This will provide you 
+with instructions on how to:
+* Build and install the program
+* Run the model and bf_switchd
+* Modify the loaded pipeline
+* Test packet processing
+
+Otherwise bf-p4c is in $PATH, and the $SDE and $SDE_INSTALL arguments have
+been added to the environment.

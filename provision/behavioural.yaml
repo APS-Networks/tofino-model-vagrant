@@ -1,0 +1,9 @@
+global-options: {}
+features:
+  drivers:
+    bfrt: true
+    bfrt-generic-flags: true
+    grpc: true
+    p4rt: true
+architectures:
+  - tofino
